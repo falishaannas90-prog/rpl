@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>UMP Shop • Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="realtime.js"></script>
+</head>
+
+<body>
+    <div class="app">
+        <aside class="sidebar"><img class="side-logo" src="assets/logo-ump.jpg">
+            <nav class="nav"><button class="active" data-page="dashboard">⌂ &nbsp; Dashboard</button><button
+                    data-page="transaksi">🛒 &nbsp; Jual Beli</button><button data-page="pesanan">📦 &nbsp; Pesanan
+                    Online</button><button data-page="pembayaran">💳 &nbsp; Pembayaran </button><button
+                    data-page="wholesale">📦 &nbsp; Barang Grosir</button><button data-page="absensi">☝ &nbsp;
+                    Absensi</button><button data-page="karyawan">👥 &nbsp; Karyawan</button><button
+                    data-page="produk">📦 &nbsp; Produk & Stok</button><button data-page="laporan">📊 &nbsp;
+                    Laporan</button><button data-page="chatadmin">💬 &nbsp; Chat Customer <b id="adminChatBadge"
+                        class="admin-chat-badge" style="display:none">0</b></button><button data-page="pengaturan">⚙
+                    &nbsp; Pengaturan</button><button id="logout" class="logout">↪ &nbsp; Logout</button></nav>
+            <div class="sidebar-foot"><b>UMP SHOP</b><br>Satu sistem untuk operasional toko & tim.</div>
+        </aside>
+        <section class="main">
+            <header class="topbar">
+                <div>
+                    <h2 id="greeting">Selamat Datang, Admin</h2><small>Kelola bisnis UMP lebih cepat dan rapi.</small>
+                </div>
+                <div class="userbox">
+                    <div>
+                        <div id="clock" class="clock">--:--:--</div><small id="date"></small>
+                    </div>
+                    <div class="avatar">A</div>
+                </div>
+            </header>
+            <div class="content">
+                <section id="dashboard" class="page active">
+                    <div class="hero-banner">
+                        <h1>Dashboard UMP Shop</h1>
+                        <p>Pantau transaksi, stok, penjualan dan kehadiran karyawan dari satu tempat.</p>
+                    </div>
+                    <div class="cards">
+                        <div class="card metric">
+                            <div class="label">Total Penjualan Hari Ini</div>
+                            <div class="value" id="salesMetric">Rp 0</div>
+                            <div class="trend">● Penjualan tercatat</div>
+                        </div>
+                        <div class="card metric">
+                            <div class="label">Total Transaksi</div>
+                            <div class="value" id="trxMetric">0</div>
+                            <div class="trend">● Jual & beli</div>
+                        </div>
+                        <div class="card metric">
+                            <div class="label">Karyawan Hadir</div>
+                            <div class="value" id="attMetric">0 / 0</div>
+                            <div class="trend">● Absensi hari ini</div>
+                        </div>
+                        <div class="card metric">
+                            <div class="label">Stok Menipis</div>
+                            <div class="value" id="stockMetric">0</div>
+                            <div class="trend">● Perlu restock</div>
+                        </div>
+                    </div>
+                    <div class="grid2">
+                        <div class="card">
+                            <div class="section-title">
+                                <h3>Grafik Penjualan 7 Hari</h3><small>Ringkasan</small>
+                            </div>
+                            <div class="chart" id="chart"></div>
+                        </div>
+                        <div class="card">
+                            <div class="section-title">
+                                <h3>Ringkasan Bisnis</h3>
+                            </div>
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>Jumlah Produk</td>
+                                        <td id="sumProduct">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Jumlah Karyawan</td>
+                                        <td id="sumEmployee">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Transaksi Tersimpan</td>
+                                        <td id="sumTrx">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Absensi Tersimpan</td>
+                                        <td id="sumAtt">0</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="quick-grid"><button class="quick" data-go="transaksi"><strong>+ Transaksi
+                                Baru</strong><small>Penjualan atau pembelian barang</small></button><button
+                            class="quick" data-go="absensi"><strong>+ Catat Absensi</strong><small>Masuk, terlambat,
+                                tidak hadir</small></button><button class="quick" data-go="produk"><strong>+ Kelola
+                                Stok</strong><small>Tambah dan edit produk</small></button></div>
+                    <div class="card" style="margin-top:15px">
+                        <div class="section-title">
+                            <h3>Transaksi Terbaru</h3><small>Aktivitas terakhir</small>
+                        </div>
+                        <div id="recent"></div>
+                    </div>
+                </section>
+                <section id="transaksi" class="page">
+                    <div class="hero-banner">
+                        <h1>Jual Beli</h1>
+                        <p>Catat penjualan dan pembelian. Stok otomatis bertambah atau berkurang.</p>
+                    </div>
+                    <div class="card">
+                        <div class="toolbar">
+                            <div>
+                                <h2>Daftar Transaksi</h2><small>Riwayat seluruh transaksi UMP.</small>
+                            </div><button class="btn btn-small" onclick="openModal('trxModal')">+ Transaksi</button>
+                        </div>
+                        <div id="trxTable"></div>
+                    </div>
+                </section>
+                <section id="pesanan" class="page">
+                    <div class="hero-banner">
+                        <h1>Pesanan Online</h1>
+                        <p>Kelola pesanan customer dan perbarui status sampai selesai.</p>
+                    </div>
+                    <div class="card">
+                        <div class="toolbar">
+                            <div>
+                                <h2>Order Customer</h2><small>Status langsung terlihat di akun customer.</small>
+                            </div>
+                        </div>
+                        <div id="orderAdminTable"></div>
+                    </div>
+                </section>
+                <section id="pembayaran" class="page">
+                    <div class="hero-banner">
+                        <h1>Pembayaran Masuk</h1>
+                        <p>Verifikasi pembayaran customer dan pantau dana yang masuk ke akun admin.</p>
+                    </div>
+                    <div class="cards">
+                        <div class="card metric">
+                            <div class="label">Saldo Pembayaran Diterima</div>
+                            <div class="value" id="paymentBalance">Rp 0</div>
+                            <div class="trend">● Pembayaran terverifikasi</div>
+                        </div>
+                        <div class="card metric">
+                            <div class="label">Menunggu Verifikasi</div>
+                            <div class="value" id="pendingPayment">0</div>
+                            <div class="trend">● Perlu dicek admin</div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:15px">
+                        <div class="toolbar">
+                            <div>
+                                <h2>Riwayat Pembayaran Customer</h2><small>Konfirmasi hanya setelah dana benar-benar
+                                    diterima.</small>
+                            </div>
+                        </div>
+                        <div id="paymentAdminTable"></div>
+                    </div>
+                </section>
+                <section id="absensi" class="page">
+                    <div class="hero-banner">
+                        <h1>Absensi Karyawan</h1>
+                        <p>Catat kehadiran dan jam absensi setiap karyawan.</p>
+                    </div>
+                    <div class="card">
+                        <div class="toolbar">
+                            <div>
+                                <h2>Riwayat Absensi</h2><small>Data kehadiran tim.</small>
+                            </div><button class="btn btn-small" onclick="openModal('attModal')">+ Catat Absensi</button>
+                        </div>
+                        <div id="attTable"></div>
+                    </div>
+                </section>
+                <section id="karyawan" class="page">
+                    <div class="hero-banner">
+                        <h1>Data Karyawan</h1>
+                        <p>Kelola nama, jabatan dan kontak karyawan UMP.</p>
+                    </div>
+                    <div class="card">
+                        <div class="toolbar">
+                            <div>
+                                <h2>Tim UMP</h2><small>Database karyawan aktif.</small>
+                            </div><button class="btn btn-small" onclick="openModal('empModal')">+ Karyawan</button>
+                        </div>
+                        <div id="empTable"></div>
+                    </div>
+                </section>
+
+                <section id="wholesale" class="page">
+                    <div class="hero-banner">
+                        <h1>Barang Grosir</h1>
+                        <p>Kelola katalog penjualan grosir untuk customer dan catat stok masuk dari supplier.</p>
+                    </div>
+                    <div class="card">
+                        <div class="section-title">
+                            <div>
+                                <h2>Katalog Grosir Customer</h2><small>Aktifkan produk, tentukan harga grosir, minimal
+                                    pembelian, dan satuan. Harga eceran tidak berubah.</small>
+                            </div><button class="btn" type="button" onclick="showWholesaleAddGuide()">＋ Tambahkan Barang
+                                Grosir</button>
+                        </div>
+                        <div class="wholesale-help"
+                            style="margin:12px 0 16px;padding:13px 15px;border-radius:12px;background:#eef6ff;color:#173a5e">
+                            <b>Caranya:</b> centang tanda <b>＋ Grosir</b> pada produk yang ingin dijual grosir, isi
+                            harga dan minimal pembelian, lalu klik <b>Simpan & Tampilkan ke Customer</b>.</div>
+                        <div id="wholesaleCatalog"></div>
+                    </div>
+                    <div class="card" style="margin-top:15px">
+                        <div class="section-title">
+                            <h2>Tambah Stok Grosir dari Supplier</h2><small>Perubahan hanya berlaku pada produk yang
+                                dipilih.</small>
+                        </div>
+                        <form id="wholesaleForm" class="form-grid">
+                            <div class="field"><label>Barang</label><select id="wholesaleProduct" required>
+                                    <option value="">Pilih produk...</option>
+                                </select></div>
+                            <div class="field"><label>Nama Supplier</label><input id="wholesaleSupplier"
+                                    placeholder="Nama supplier" required></div>
+                            <div class="field"><label>Jumlah stok masuk</label><input id="wholesaleQty" type="number"
+                                    min="1" step="1" placeholder="Contoh: 50" required></div>
+                            <div class="field"><label>Harga beli per barang (Rp)</label><input id="wholesalePrice"
+                                    type="number" min="0" step="100" placeholder="Contoh: 25000" required></div>
+                            <div class="field" style="grid-column:1/-1"><label>Catatan (opsional)</label><input
+                                    id="wholesaleNote" placeholder="Nomor nota atau keterangan"></div>
+                            <div><button class="btn" type="submit">＋ Simpan Stok Grosir</button></div>
+                        </form>
+                    </div>
+                    <div class="card" style="margin-top:15px">
+                        <div class="section-title">
+                            <h2>Riwayat Barang Grosir</h2>
+                        </div>
+                        <div id="wholesaleHistory"></div>
+                    </div>
+                </section>
+                <section id="customer" class="page">
+                    <div class="hero-banner">
+                        <h1>Toko Customer</h1>
+                        <p>Halaman khusus pembelian barang oleh customer. Pilih produk, masukkan ke keranjang, lalu
+                            checkout.</p>
+                    </div>
+                    <div class="customer-layout">
+                        <div>
+                            <div class="toolbar">
+                                <div>
+                                    <h2>Katalog Produk</h2><small>Pilih sparepart yang tersedia di stok.</small>
+                                </div><input id="customerSearch" placeholder="Cari produk..."
+                                    oninput="renderCustomerShop()" style="max-width:260px">
+                            </div>
+                            <div id="customerProducts" class="customer-grid"></div>
+                        </div>
+                        <div class="card cart-panel">
+                            <div class="section-title">
+                                <h3>🛒 Keranjang</h3><small id="cartCount">0 barang</small>
+                            </div>
+                            <div id="customerCart"></div>
+                            <div class="checkout-total">Total: <span id="cartTotal">Rp 0</span></div>
+                            <div class="field"><label>Nama Customer</label><input id="customerName"
+                                    placeholder="Nama pembeli"></div>
+                            <div class="field"><label>No. HP</label><input id="customerPhone"
+                                    placeholder="08xxxxxxxxxx"></div>
+                            <div class="field"><label>Metode Pembayaran</label><select id="customerPayment">
+                                    <option>Tunai</option>
+                                    <option>Transfer Bank</option>
+                                    <option>QRIS</option>
+                                </select></div><button class="btn" style="width:100%;margin-top:12px"
+                                onclick="customerCheckout()">Checkout & Bayar</button>
+                            <div id="checkoutMessage"></div>
+                        </div>
+                    </div>
+                </section>
+                <section id="produk" class="page">
+                    <div class="hero-banner">
+                        <h1>Produk & Stok</h1>
+                        <p>Kelola katalog sparepart dan tambahkan stok barang masuk dengan cepat.</p>
+                    </div>
+                    <div class="card">
+                        <div class="toolbar">
+                            <div>
+                                <h2>Inventory</h2><small>Gunakan tombol + Tambah Stok pada produk yang sudah
+                                    ada.</small>
+                            </div><button class="btn btn-small" onclick="openModal('prodModal')">+ Produk Baru</button>
+                        </div>
+                        <div id="prodTable"></div>
+                    </div>
+                    <div class="card" style="margin-top:15px">
+                        <div class="toolbar">
+                            <div>
+                                <h2>Riwayat Stok Masuk</h2><small>Setiap penambahan stok oleh admin tercatat
+                                    otomatis.</small>
+                            </div>
+                        </div>
+                        <div id="stockHistoryTable"></div>
+                    </div>
+                </section>
+                <section id="laporan" class="page">
+                    <div class="hero-banner">
+                        <h1>Laporan Bisnis</h1>
+                        <p>Ringkasan penjualan, pembelian, transaksi dan nilai stok.</p>
+                    </div>
+                    <div class="cards">
+                        <div class="card metric">
+                            <div class="label">Total Penjualan</div>
+                            <div class="value" id="reportSales"></div>
+                        </div>
+                        <div class="card metric">
+                            <div class="label">Total Pembelian</div>
+                            <div class="value" id="reportBuy"></div>
+                        </div>
+                        <div class="card metric">
+                            <div class="label">Jumlah Transaksi</div>
+                            <div class="value" id="reportCount"></div>
+                        </div>
+                        <div class="card metric">
+                            <div class="label">Nilai Stok</div>
+                            <div class="value" id="reportStock"></div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:15px">
+                        <h3>Export Laporan</h3>
+                        <p style="color:#8fa6bf">Unduh data transaksi sebagai CSV yang dapat dibuka di Excel.</p><button
+                            class="btn btn-blue" onclick="exportCSV()">Download CSV</button>
+                    </div>
+                </section>
+                <section id="chatadmin" class="page">
+                    <div class="hero-banner">
+                        <h1>Chat Customer</h1>
+                        <p>Balas pesan customer secara langsung.</p>
+                    </div>
+                    <div class="admin-chat-layout">
+                        <div class="card">
+                            <h3>Inbox Customer</h3>
+                            <div id="adminChatList"></div>
+                        </div>
+                        <div class="card">
+                            <div id="adminChatEmpty" class="admin-chat-empty">💬<h3>Pilih Customer</h3>
+                                <p>Pilih chat di sebelah kiri.</p>
+                            </div>
+                            <div id="adminChatActive" style="display:none">
+                                <div class="admin-chat-head"><b id="adminChatName"></b><small
+                                        id="adminChatPhone"></small></div>
+                                <div id="adminChatMessages" class="admin-chat-messages"></div>
+                                <form id="adminChatForm" class="admin-chat-send"><input id="adminChatText"
+                                        maxlength="500" placeholder="Ketik balasan Admin..."><button
+                                        class="btn btn-small">Kirim ➤</button></form>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section id="pengaturan" class="page">
+                    <div class="hero-banner">
+                        <h1>Pengaturan</h1>
+                        <p>Sesuaikan identitas toko dan nama administrator.</p>
+                    </div>
+                    <div class="card">
+                        <div class="form-grid">
+                            <div class="field"><label>Nama Toko</label><input id="shopName"
+                                    value="Universal Mega Parts"></div>
+                            <div class="field"><label>Nama Admin</label><input id="adminName" value="Admin"></div>
+                            <div class="field"><label>Bank Admin</label><input id="payBank" placeholder="BCA"></div>
+                            <div class="field"><label>No. Rekening</label><input id="payAccount"
+                                    placeholder="1234567890"></div>
+                            <div class="field"><label>Nama Pemilik Rekening</label><input id="payHolder"
+                                    placeholder="Universal Mega Parts"></div>
+                            <div class="field"><label>No. DANA Admin</label><input id="payDana"
+                                    placeholder="08xxxxxxxxxx"></div>
+                        </div><button class="btn btn-small" onclick="saveSettings()">Simpan Pengaturan</button>
+                        <p class="footer-note">Versi demo frontend • data disimpan pada browser dengan localStorage.</p>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </div>
+    <div class="modal" id="stockModal">
+        <form class="modal-box" id="stockForm">
+            <h3>Tambah Stok Barang</h3><input type="hidden" name="productId" id="stockProductId">
+            <div class="field"><label>Produk</label><input id="stockProductName" readonly></div>
+            <div class="form-grid">
+                <div class="field"><label>Stok Saat Ini</label><input id="stockCurrent" readonly></div>
+                <div class="field"><label>Jumlah Stok Masuk</label><input name="qty" type="number" min="1"
+                        placeholder="Contoh: 10" required></div>
+            </div>
+            <div class="field"><label>Catatan (opsional)</label><input name="note"
+                    placeholder="Contoh: Restock supplier / barang datang"></div>
+            <div class="modal-actions"><button type="button" class="btn btn-light"
+                    onclick="closeModal('stockModal')">Batal</button><button class="btn btn-small">+ Tambahkan
+                    Stok</button></div>
+        </form>
+    </div>
+    <div class="modal" id="prodModal">
+        <form class="modal-box" id="prodForm">
+            <h3>Tambah Produk</h3>
+            <div class="form-grid">
+                <div class="field"><label>Nama Produk</label><input name="name" required></div>
+                <div class="field"><label>Kategori</label><input name="category" required></div>
+                <div class="field"><label>Harga</label><input name="price" type="number" min="0" required></div>
+                <div class="field"><label>Stok</label><input name="stock" type="number" min="0" required></div>
+                <div class="field" style="grid-column:1/-1"><label>URL Gambar Produk</label><input name="image"
+                        type="url" placeholder="https://... (opsional)"><small style="color:#8fa6bf">Tempel link foto
+                        barang. Jika kosong, gambar default sparepart akan digunakan.</small></div>
+            </div>
+            <div class="modal-actions"><button type="button" class="btn btn-light"
+                    onclick="closeModal('prodModal')">Batal</button><button class="btn btn-small">Simpan</button></div>
+        </form>
+    </div>
+    <div class="modal" id="empModal">
+        <form class="modal-box" id="empForm">
+            <h3>Tambah Karyawan</h3>
+            <div class="field"><label>Nama</label><input name="name" required></div>
+            <div class="form-grid">
+                <div class="field"><label>Jabatan</label><input name="role" required></div>
+                <div class="field"><label>No. HP</label><input name="phone" required></div>
+            </div>
+            <div class="modal-actions"><button type="button" class="btn btn-light"
+                    onclick="closeModal('empModal')">Batal</button><button class="btn btn-small">Simpan</button></div>
+        </form>
+    </div>
+    <div class="modal" id="attModal">
+        <form class="modal-box" id="attForm">
+            <h3>Catat Absensi</h3>
+            <div class="field"><label>Karyawan</label><select name="employee" id="attEmployee" required></select></div>
+            <div class="field"><label>Status</label><select name="status">
+                    <option>Hadir</option>
+                    <option>Terlambat</option>
+                    <option>Tidak Hadir</option>
+                </select></div>
+            <div class="modal-actions"><button type="button" class="btn btn-light"
+                    onclick="closeModal('attModal')">Batal</button><button class="btn btn-small">Simpan</button></div>
+        </form>
+    </div>
+    <div class="modal" id="trxModal">
+        <form class="modal-box" id="trxForm">
+            <h3>Tambah Transaksi</h3>
+            <div class="form-grid">
+                <div class="field"><label>Jenis</label><select name="type">
+                        <option>Penjualan</option>
+                        <option>Pembelian</option>
+                    </select></div>
+                <div class="field"><label>Produk</label><select name="product" id="trxProduct" required></select></div>
+                <div class="field"><label>Jumlah</label><input name="qty" type="number" min="1" required></div>
+                <div class="field"><label>Total (Rp)</label><input name="total" type="number" min="0" required></div>
+            </div>
+            <div class="modal-actions"><button type="button" class="btn btn-light"
+                    onclick="closeModal('trxModal')">Batal</button><button class="btn btn-small">Simpan</button></div>
+        </form>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

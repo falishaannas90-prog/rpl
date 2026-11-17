@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>UMP Shop • Owner Command Center</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="realtime.js"></script>
+    <style>
+        * {
+            box-sizing: border-box
+        }
+
+        .ow {
+            min-height: 100vh;
+            background: #07111f;
+            color: #eef5ff;
+            font-family: Inter, system-ui, Arial
+        }
+
+        .top {
+            height: 76px;
+            padding: 0 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(10, 25, 43, .96);
+            border-bottom: 1px solid #203a55;
+            position: sticky;
+            top: 0;
+            z-index: 20
+        }
+
+        .brand {
+            display: flex;
+            gap: 12px;
+            align-items: center
+        }
+
+        .brand img {
+            width: 46px;
+            height: 46px;
+            border-radius: 13px;
+            object-fit: cover
+        }
+
+        .brand b {
+            font-size: 16px
+        }
+
+        .brand small {
+            display: block;
+            color: #8ea6bf;
+            margin-top: 3px
+        }
+
+        .live {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #0d2a25;
+            border: 1px solid #1e5c4d;
+            padding: 8px 12px;
+            border-radius: 999px;
+            color: #7ce6bc;
+            font-size: 12px;
+            font-weight: 800
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #39dc9c;
+            box-shadow: 0 0 0 5px #39dc9c20;
+            animation: p 1.6s infinite
+        }
+
+        @keyframes p {
+            50% {
+                box-shadow: 0 0 0 9px transparent
+            }
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            align-items: center
+        }
+
+        .btn {
+            border: 0;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-weight: 800;
+            cursor: pointer;
+            background: #223b56;
+            color: white
+        }
+
+        .main {
+            max-width: 1480px;
+            margin: auto;
+            padding: 26px
+        }
+
+        .hero {
+            background: linear-gradient(115deg, #112d4c 0%, #182d4b 50%, #8d1831 100%);
+            border: 1px solid #284661;
+            border-radius: 22px;
+            padding: 27px;
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            align-items: center;
+            box-shadow: 0 18px 45px #0004
+        }
+
+        .hero h1 {
+            margin: 0 0 7px;
+            font-size: 28px
+        }
+
+        .hero p {
+            margin: 0;
+            color: #b9cce0
+        }
+
+        .stamp {
+            text-align: right;
+            color: #9eb4ca;
+            font-size: 12px
+        }
+
+        .stamp b {
+            display: block;
+            color: white;
+            font-size: 16px;
+            margin-top: 5px
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 13px;
+            margin: 18px 0
+        }
+
+        .metric,
+        .card {
+            background: #0e2136;
+            border: 1px solid #233f5a;
+            border-radius: 17px
+        }
+
+        .metric {
+            padding: 17px;
+            position: relative;
+            overflow: hidden
+        }
+
+        .metric:after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #ffffff08;
+            right: -20px;
+            top: -25px
+        }
+
+        .metric small {
+            color: #8fa9c2
+        }
+
+        .metric strong {
+            display: block;
+            font-size: 23px;
+            margin: 8px 0 3px
+        }
+
+        .metric span {
+            font-size: 11px;
+            color: #70d7ae
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 16px
+        }
+
+        .card {
+            padding: 19px
+        }
+
+        .card h2 {
+            font-size: 17px;
+            margin: 0
+        }
+
+        .sub {
+            color: #8fa9c2;
+            font-size: 12px;
+            margin-top: 4px
+        }
+
+        .chart {
+            height: 285px;
+            margin-top: 12px
+        }
+
+        .chart canvas {
+            width: 100%;
+            height: 100%;
+            display: block
+        }
+
+        .split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 16px
+        }
+
+        .bars {
+            margin-top: 16px
+        }
+
+        .barrow {
+            display: grid;
+            grid-template-columns: minmax(100px, 1fr) 2fr auto;
+            gap: 10px;
+            align-items: center;
+            margin: 12px 0;
+            font-size: 12px
+        }
+
+        .track {
+            height: 8px;
+            background: #1a344e;
+            border-radius: 20px;
+            overflow: hidden
+        }
+
+        .fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e51d3c, #ff6a7d);
+            border-radius: 20px
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px;
+            margin-top: 15px
+        }
+
+        .status {
+            background: #091a2c;
+            border: 1px solid #203d59;
+            border-radius: 12px;
+            padding: 12px
+        }
+
+        .status b {
+            font-size: 19px;
+            display: block
+        }
+
+        .status small {
+            color: #8fa9c2
+        }
+
+        .section {
+            margin-top: 16px
+        }
+
+        .tools {
+            display: flex;
+            gap: 9px;
+            flex-wrap: wrap;
+            align-items: end;
+            margin: 14px 0
+        }
+
+        .tools label {
+            font-size: 11px;
+            color: #8fa9c2;
+            display: grid;
+            gap: 5px
+        }
+
+        .tools input {
+            background: #081827;
+            color: #fff;
+            border: 1px solid #2a4966;
+            border-radius: 9px;
+            padding: 9px 11px
+        }
+
+        .table {
+            overflow: auto
+        }
+
+        .table table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px
+        }
+
+        .table th,
+        .table td {
+            padding: 11px;
+            border-bottom: 1px solid #203a54;
+            text-align: left;
+            font-size: 12px
+        }
+
+        .table th {
+            color: #8fa9c2
+        }
+
+        .pill {
+            padding: 5px 8px;
+            border-radius: 20px;
+            background: #173451;
+            font-size: 10px;
+            font-weight: 800
+        }
+
+        .empty {
+            padding: 28px;
+            text-align: center;
+            color: #829bb4
+        }
+
+        .daily {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-top: 12px
+        }
+
+        .day {
+            background: #091a2c;
+            border: 1px solid #203d59;
+            border-radius: 11px;
+            padding: 10px;
+            min-width: 90px
+        }
+
+        .day small {
+            color: #8fa9c2
+        }
+
+        .day b {
+            display: block;
+            margin-top: 5px;
+            font-size: 12px
+        }
+
+        .day span {
+            font-size: 10px;
+            color: #7690a9
+        }
+
+        @media(max-width:1100px) {
+            .metrics {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .grid,
+            .split {
+                grid-template-columns: 1fr
+            }
+        }
+
+        @media(max-width:650px) {
+            .main {
+                padding: 14px
+            }
+
+            .top {
+                padding: 0 14px
+            }
+
+            .metrics {
+                grid-template-columns: 1fr
+            }
+
+            .hero {
+                align-items: flex-start;
+                flex-direction: column
+            }
+
+            .stamp {
+                text-align: left
+            }
+
+            .daily {
+                overflow: auto
+            }
+
+            .actions .live {
+                display: none
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="ow">
+        <header class="top">
+            <div class="brand"><img src="assets/logo-ump.jpg">
+                <div><b>UMP SHOP • OWNER</b><small>Executive Command Center</small></div>
+            </div>
+            <div class="actions">
+                <div class="live"><i class="dot"></i><span id="liveText">REAL-TIME AKTIF</span></div><button class="btn"
+                    onclick="logoutOwner()">↪ Logout</button>
+            </div>
+        </header>
+        <main class="main">
+            <section class="hero">
+                <div>
+                    <h1>Dashboard Owner</h1>
+                    <p>Pantau penjualan, customer, pesanan, stok, dan absensi dari Admin & Customer dalam satu
+                        dashboard.</p>
+                </div>
+                <div class="stamp">Pembaruan terakhir<b id="lastUpdate">—</b></div>
+            </section>
+            <section class="metrics">
+                <div class="metric"><small>💰 Total Omzet</small><strong id="mRevenue">Rp 0</strong><span>Seluruh
+                        penjualan</span></div>
+                <div class="metric"><small>📈 Penjualan Hari Ini</small><strong id="mToday">Rp 0</strong><span
+                        id="todayTx">0 transaksi hari ini</span></div>
+                <div class="metric"><small>🛒 Total Pesanan</small><strong id="mOrders">0</strong><span id="newOrders">0
+                        pesanan baru</span></div>
+                <div class="metric"><small>📦 Produk Terjual</small><strong id="mQty">0</strong><span>Eceran +
+                        grosir</span></div>
+                <div class="metric"><small>👥 Kehadiran Hari Ini</small><strong id="mPresent">0</strong><span
+                        id="attInfo">Belum ada absensi</span></div>
+            </section>
+            <div class="grid">
+                <section class="card">
+                    <div style="display:flex;justify-content:space-between;gap:12px">
+                        <div>
+                            <h2>Grafik Penjualan 7 Hari</h2>
+                            <div class="sub">Omzet harian • otomatis tersambung dengan transaksi Customer & Admin</div>
+                        </div>
+                        <div style="text-align:right"><small class="sub">Total 7 hari</small><b id="sevenTotal"
+                                style="display:block;margin-top:4px">Rp 0</b></div>
+                    </div>
+                    <div class="chart"><canvas id="salesChart"></canvas></div>
+                    <div class="daily" id="daily"></div>
+                </section>
+                <aside class="card">
+                    <h2>Status Pesanan</h2>
+                    <div class="sub">Kondisi pesanan customer saat ini</div>
+                    <div class="status-grid" id="statusGrid"></div>
+                    <h2 style="margin-top:22px">Komposisi Penjualan</h2>
+                    <div class="sub">Eceran dibanding grosir</div>
+                    <div class="bars" id="salesMix"></div>
+                </aside>
+            </div>
+            <div class="split">
+                <section class="card">
+                    <h2>🔥 Produk Terlaris</h2>
+                    <div class="sub">Berdasarkan jumlah barang terjual</div>
+                    <div class="bars" id="topProducts"></div>
+                </section>
+                <section class="card">
+                    <h2>👥 Ringkasan Absensi</h2>
+                    <div class="sub">Data langsung dari absensi Admin</div>
+                    <div class="status-grid" id="attSummary"></div>
+                </section>
+            </div>
+            <section class="card section">
+                <h2>Transaksi Terbaru</h2>
+                <div class="sub">Penjualan eceran dan grosir terbaru</div>
+                <div class="tools"><label>Cari<input id="q"
+                            placeholder="Invoice, customer, produk..."></label><label>Dari<input id="from"
+                            type="date"></label><label>Sampai<input id="to" type="date"></label><button class="btn"
+                        onclick="renderTransactions()">Filter</button><button class="btn" onclick="exportCSV()">Export
+                        CSV</button></div>
+                <div class="table" id="txTable"></div>
+            </section>
+            <section class="card section">
+                <div style="display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap">
+                    <div>
+                        <h2>👥 Absensi Karyawan</h2>
+                        <div class="sub">Data absensi lengkap tersambung dengan Admin secara real-time. Owner hanya
+                            dapat melihat.</div>
+                    </div>
+                    <div class="live"><i class="dot"></i><span>LIVE DARI ADMIN</span></div>
+                </div>
+                <div class="tools"><label>Cari Karyawan<input id="attQ" placeholder="Nama karyawan..."
+                            oninput="renderAtt()"></label><label>Status<select id="attStatus" onchange="renderAtt()">
+                            <option value="">Semua Status</option>
+                            <option>Hadir</option>
+                            <option>Terlambat</option>
+                            <option>Tidak Hadir</option>
+                            <option>Izin</option>
+                        </select></label><label>Dari<input id="attFrom" type="date"
+                            onchange="renderAtt()"></label><label>Sampai<input id="attTo" type="date"
+                            onchange="renderAtt()"></label><button class="btn" onclick="clearAttFilter()">Reset</button>
+                </div>
+                <div class="status-grid" id="attToday" style="margin-top:14px"></div>
+                <div class="table" id="attTable" style="margin-top:14px"></div>
+            </section>
+        </main>
+    </div>
+    <script>
+        if (localStorage.getItem('ump_login') !== 'owner') location.replace('index.html'); const rp = n => 'Rp ' + Number(n || 0).toLocaleString('id-ID'); const arr = k => { try { return JSON.parse(localStorage.getItem(k) || '[]') } catch (e) { return [] } }; const sales = () => arr('ump_transactions').filter(x => String(x.type || '').startsWith('Penjualan')); const orders = () => arr('ump_customer_orders'); const attendance = () => { let a = arr('ump_attendance'); return a.length ? a : arr('attendance') };
+        function dayData() { let s = sales(), o = []; for (let i = 6; i >= 0; i--) { let d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - i); let n = new Date(d); n.setDate(n.getDate() + 1); let r = s.filter(x => { let z = new Date(x.date); return z >= d && z < n }); o.push({ d, total: r.reduce((a, x) => a + Number(x.total || 0), 0), count: r.length }) } return o }
+        function chart() { let data = dayData(), cv = document.getElementById('salesChart'), r = cv.getBoundingClientRect(), dpr = devicePixelRatio || 1, w = Math.max(300, r.width), h = Math.max(220, r.height); cv.width = w * dpr; cv.height = h * dpr; let c = cv.getContext('2d'); c.scale(dpr, dpr); let p = { l: 58, r: 18, t: 20, b: 38 }, cw = w - p.l - p.r, ch = h - p.t - p.b, max = Math.max(...data.map(x => x.total), 1); c.clearRect(0, 0, w, h); c.font = '11px Arial'; for (let i = 0; i <= 4; i++) { let y = p.t + ch * i / 4; c.strokeStyle = '#24405a'; c.lineWidth = 1; c.beginPath(); c.moveTo(p.l, y); c.lineTo(w - p.r, y); c.stroke(); c.fillStyle = '#7893ad'; let v = max * (1 - i / 4); c.fillText(v >= 1e6 ? (v / 1e6).toFixed(1) + 'jt' : v >= 1e3 ? Math.round(v / 1e3) + 'rb' : Math.round(v), 4, y + 4) } let pts = data.map((x, i) => ({ x: p.l + cw * i / 6, y: p.t + ch - (x.total / max) * ch })); let g = c.createLinearGradient(0, p.t, 0, p.t + ch); g.addColorStop(0, 'rgba(229,29,60,.35)'); g.addColorStop(1, 'rgba(229,29,60,0)'); c.beginPath(); c.moveTo(pts[0].x, p.t + ch); pts.forEach((z, i) => i ? c.lineTo(z.x, z.y) : c.lineTo(z.x, z.y)); c.lineTo(pts[6].x, p.t + ch); c.closePath(); c.fillStyle = g; c.fill(); c.beginPath(); pts.forEach((z, i) => i ? c.lineTo(z.x, z.y) : c.moveTo(z.x, z.y)); c.strokeStyle = '#ff3654'; c.lineWidth = 3; c.stroke(); pts.forEach((z, i) => { c.fillStyle = '#ff3654'; c.beginPath(); c.arc(z.x, z.y, 4, 0, Math.PI * 2); c.fill(); c.fillStyle = '#8da6be'; c.textAlign = 'center'; c.fillText(data[i].d.toLocaleDateString('id-ID', { weekday: 'short' }), z.x, h - 12) }); c.textAlign = 'left'; document.getElementById('sevenTotal').textContent = rp(data.reduce((a, x) => a + x.total, 0)); document.getElementById('daily').innerHTML = data.map(x => `<div class="day"><small>${x.d.toLocaleDateString('id-ID', { weekday: 'short', day: '2-digit' })}</small><b>${rp(x.total)}</b><span>${x.count} transaksi</span></div>`).join('') }
+        function render() { let s = sales(), o = orders(), a = attendance(), today = new Date().toDateString(), st = s.filter(x => new Date(x.date).toDateString() === today), at = a.filter(x => new Date(x.date).toDateString() === today), present = at.filter(x => /hadir/i.test(x.status || '') && !/tidak/i.test(x.status || '')); mRevenue.textContent = rp(s.reduce((n, x) => n + Number(x.total || 0), 0)); mToday.textContent = rp(st.reduce((n, x) => n + Number(x.total || 0), 0)); todayTx.textContent = st.length + ' transaksi hari ini'; mOrders.textContent = o.length; newOrders.textContent = o.filter(x => ['Pesanan Dibuat', 'Baru'].includes(x.status || 'Pesanan Dibuat')).length + ' pesanan baru'; mQty.textContent = s.reduce((n, x) => n + Number(x.qty || 0), 0); mPresent.textContent = present.length; attInfo.textContent = at.length ? at.length + ' catatan absensi hari ini' : 'Belum ada absensi'; lastUpdate.textContent = new Date().toLocaleTimeString('id-ID'); let statuses = ['Pesanan Dibuat', 'Diproses', 'Dikemas', 'Dikirim', 'Selesai', 'Dibatalkan']; statusGrid.innerHTML = statuses.map(z => `<div class="status"><b>${o.filter(x => (x.status || 'Pesanan Dibuat') === z).length}</b><small>${z}</small></div>`).join(''); let retail = s.filter(x => !String(x.type).includes('Grosir') && !String(x.orderType).includes('Grosir')).reduce((n, x) => n + Number(x.total || 0), 0), whole = s.reduce((n, x) => n + Number(x.total || 0), 0) - retail, mx = Math.max(retail, whole, 1); salesMix.innerHTML = [['Eceran', retail], ['Grosir', whole]].map(x => `<div class="barrow"><b>${x[0]}</b><div class="track"><div class="fill" style="width:${x[1] / mx * 100}%"></div></div><span>${rp(x[1])}</span></div>`).join(''); let prod = {}; s.forEach(x => prod[x.product] = (prod[x.product] || 0) + Number(x.qty || 0)); let tops = Object.entries(prod).sort((a, b) => b[1] - a[1]).slice(0, 5), pm = Math.max(...tops.map(x => x[1]), 1); topProducts.innerHTML = tops.length ? tops.map((x, i) => `<div class="barrow"><b>${i + 1}. ${x[0]}</b><div class="track"><div class="fill" style="width:${x[1] / pm * 100}%"></div></div><span>${x[1]} unit</span></div>`).join('') : '<div class="empty">Belum ada penjualan.</div>'; let cats = ['Hadir', 'Terlambat', 'Tidak Hadir', 'Izin']; attSummary.innerHTML = cats.map(z => `<div class="status"><b>${a.filter(x => String(x.status || '').toLowerCase() === z.toLowerCase()).length}</b><small>${z}</small></div>`).join(''); renderTransactions(); renderAtt(); chart() }
+        function filtered() { let qq = q.value.toLowerCase(), f = from.value, t = to.value; return sales().filter(x => { let d = new Date(x.date), hay = [x.orderId, x.customer, x.product].join(' ').toLowerCase(); return (!qq || hay.includes(qq)) && (!f || d >= new Date(f + 'T00:00')) && (!t || d <= new Date(t + 'T23:59:59')) }).sort((a, b) => new Date(b.date) - new Date(a.date)) }
+        function renderTransactions() { let a = filtered().slice(0, 100); txTable.innerHTML = a.length ? `<table><thead><tr><th>Tanggal</th><th>Invoice</th><th>Customer</th><th>Jenis</th><th>Produk</th><th>Qty</th><th>Total</th></tr></thead><tbody>${a.map(x => `<tr><td>${new Date(x.date).toLocaleString('id-ID')}</td><td><b>${x.orderId || '-'}</b></td><td>${x.customer || '-'}</td><td><span class="pill">${String(x.type).includes('Grosir') || x.orderType === 'Grosir' ? 'GROSIR' : 'ECERAN'}</span></td><td>${x.product || '-'}</td><td>${x.qty || 0}</td><td><b>${rp(x.total)}</b></td></tr>`).join('')}</tbody></table>` : '<div class="empty">Belum ada transaksi.</div>' }
+        function renderAtt() { let all = attendance().sort((x, y) => new Date(y.date) - new Date(x.date)), q = (document.getElementById('attQ')?.value || '').toLowerCase(), st = document.getElementById('attStatus')?.value || '', fr = document.getElementById('attFrom')?.value || '', to = document.getElementById('attTo')?.value || ''; let a = all.filter(x => { let d = new Date(x.date), ds = d.toISOString().slice(0, 10); return (!q || String(x.employee || '').toLowerCase().includes(q)) && (!st || String(x.status || '') === st) && (!fr || ds >= fr) && (!to || ds <= to) }); let today = new Date().toDateString(), ta = all.filter(x => new Date(x.date).toDateString() === today), cats = ['Hadir', 'Terlambat', 'Tidak Hadir', 'Izin']; if (document.getElementById('attToday')) attToday.innerHTML = cats.map(z => `<div class="status"><b>${ta.filter(x => String(x.status || '').toLowerCase() === z.toLowerCase()).length}</b><small>${z} Hari Ini</small></div>`).join(''); attTable.innerHTML = a.length ? `<table><thead><tr><th>No</th><th>Karyawan</th><th>Status</th><th>Tanggal</th><th>Jam</th></tr></thead><tbody>${a.map((x, i) => { let d = new Date(x.date); return `<tr><td>${i + 1}</td><td><b>${x.employee || '-'}</b></td><td><span class="pill">${x.status || '-'}</span></td><td>${d.toLocaleDateString('id-ID')}</td><td>${d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</td></tr>` }).join('')}</tbody></table>` : '<div class="empty">Tidak ada data absensi yang sesuai filter.</div>' } function clearAttFilter() { ['attQ', 'attStatus', 'attFrom', 'attTo'].forEach(id => { let e = document.getElementById(id); if (e) e.value = '' }); renderAtt() }
+        function exportCSV() { let rows = [['Tanggal', 'Invoice', 'Customer', 'Jenis', 'Produk', 'Qty', 'Total'], ...filtered().map(x => [x.date, x.orderId || '', x.customer || '', x.orderType || x.type, x.product, x.qty, x.total])], csv = rows.map(r => r.map(v => '"' + String(v ?? '').replaceAll('"', '""') + '"').join(',')).join('\n'), u = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })), a = document.createElement('a'); a.href = u; a.download = 'laporan-owner.csv'; a.click(); URL.revokeObjectURL(u) } function logoutOwner() { localStorage.removeItem('ump_login'); location = 'index.html' } q.oninput = renderTransactions; window.addEventListener('ump:realtime', () => render()); window.addEventListener('resize', () => { clearTimeout(window.rt); window.rt = setTimeout(chart, 120) }); setInterval(() => { liveText.textContent = document.documentElement.dataset.realtime === 'offline' ? 'KONEKSI TERPUTUS' : 'REAL-TIME AKTIF' }, 1500); setTimeout(render, 250); render();
+    </script>
+</body>
+
+</html>

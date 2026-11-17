@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>UMP Shop • Masuk</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .login-password-wrap{position:relative;display:flex;align-items:center;width:100%}
+    .login-password-wrap input{width:100%;padding-right:3.2rem!important;box-sizing:border-box}
+    .login-eye{position:absolute;right:.55rem;top:50%;transform:translateY(-50%);border:0;background:transparent;color:#26364a;cursor:pointer;padding:.4rem .55rem;font-size:1.05rem;line-height:1;border-radius:8px}
+    .login-eye:focus-visible{outline:2px solid #2563eb;outline-offset:2px}
+  </style>
+</head>
+
+<body class="v17-login-body">
+  <header class="v17-public-nav"><a class="v17-public-brand" href="index.html"><img src="assets/logo-ump.jpg">
+      <div><b>UMP SHOP</b><small>SPAREPART & AKSESORIS MOTOR</small></div>
+    </a><span>⚡ Motor Sehat, Perjalanan Makin Hebat</span></header>
+  <main class="v17-login-shell" id="home">
+    <section class="v17-login-showcase">
+      <div class="v17-show-slide active"
+        style="background-image:linear-gradient(90deg,rgba(2,10,22,.93),rgba(2,10,22,.30)),url('assets/promo-sparepart.jpg')">
+        <div><em>SPAREPART ORIGINAL</em>
+          <h1>JAGA PERFORMA<br><strong>MOTOR KESAYANGANMU</strong></h1>
+          <p>Tersedia berbagai sparepart, oli, aksesoris, dan perlengkapan motor dengan kualitas terbaik dan harga
+            terjangkau.</p><button onclick="selectRole('customer')">Belanja Sekarang　›</button>
+        </div>
+      </div>
+      <div class="v17-show-slide"
+        style="background-image:linear-gradient(90deg,rgba(2,10,22,.93),rgba(2,10,22,.30)),url('assets/promo-service.jpg')">
+        <div><em>UMP OFFICIAL STORE</em>
+          <h1>SPAREPART PILIHAN<br><strong>UNTUK MOTOR ANDA</strong></h1>
+          <p>Kelola kebutuhan motor dan temukan produk UMP Shop dalam satu tempat.</p>
+        </div>
+      </div>
+      <button class="v17-slide-prev" onclick="v17Move(-1)">‹</button><button class="v17-slide-next"
+        onclick="v17Move(1)">›</button>
+      <div class="v17-slide-dots"><i class="active"></i><i></i></div>
+      <div class="v17-show-cards">
+        <article><b>JAGA PERFORMA</b><small>Sparepart pilihan UMP</small></article>
+        <article><b>SERVIS & PERAWATAN</b><small>Motor selalu prima</small></article>
+        <article><b>BAN MOTOR</b><small>Berkualitas & nyaman</small></article>
+      </div>
+    </section>
+    <section class="v17-login-panel">
+      <div class="v17-panel-brand"><img src="assets/logo-ump.jpg"><b>UMP SHOP</b><small>SPAREPART & AKSESORIS
+          MOTOR</small></div>
+      <h2>Selamat Datang<br>di UMP Shop</h2>
+      <p>Pilih jenis login untuk melanjutkan ke akun Anda.</p>
+      <div class="v17-role-cards"><button class="active admin" onclick="selectRole('admin')"><span>♟</span><b>Login
+            Admin</b><small>Kelola toko & data</small></button><button class="owner"
+          onclick="selectRole('owner')"><span>★</span><b>Login Owner</b><small>Lihat semua
+            penjualan</small></button><button class="customer" onclick="selectRole('customer')"><span>●</span><b>Login
+            Customer</b><small>Belanja online</small></button>
+      </div>
+      <form id="loginForm" class="v17-login-form"><input type="hidden" id="loginRole"
+          value="admin"><label>Username<input id="username" required placeholder="admin"
+            autocomplete="username"></label><label>Password<div class="login-password-wrap"><input id="password" type="password" required
+            placeholder="••••••••" autocomplete="current-password"><button type="button" class="login-eye" aria-label="Tampilkan password" aria-pressed="false" onclick="toggleLoginPassword()">👁</button></div></label><button id="loginButton">Masuk sebagai Admin
+          →</button><small id="loginHint">Demo Admin: <b>admin</b> / <b>admin123</b></small></form>
+      <div class="v17-or"><span></span>atau<span></span></div><a class="v17-register-link"
+        href="register.html"><b>👤＋　Daftar Akun Customer</b><small>Buat akun untuk berbelanja</small></a>
+      <blockquote>“Kualitas terbaik untuk perjalanan terbaikmu”</blockquote>
+    </section>
+  </main>
+  <footer class="v17-login-footer"><span>🛡 Produk Original & Berkualitas</span><span>🚚 Pengiriman Cepat &
+      Aman</span><span>🎧 Layanan Pelanggan</span><small>© 2026 UMP Shop. All rights reserved.</small></footer>
+  <script>
+    if (!localStorage.getItem('ump_customers')) localStorage.setItem('ump_customers', JSON.stringify([{ id: 1, name: 'Customer Demo', username: 'customer', password: 'customer123', phone: '081234567890', address: 'Jakarta' }]));
+    const loginForm = document.getElementById('loginForm'), role = document.getElementById('loginRole'), u = document.getElementById('username'), p = document.getElementById('password'), hint = document.getElementById('loginHint'), btn = document.getElementById('loginButton');
+    function toggleLoginPassword() { const eye = document.querySelector('.login-eye'); p.type = p.type === 'password' ? 'text' : 'password'; const shown = p.type === 'text'; eye.textContent = shown ? '🙈' : '👁'; eye.setAttribute('aria-label', shown ? 'Sembunyikan password' : 'Tampilkan password'); eye.setAttribute('aria-pressed', String(shown)); }
+    function umpNotice(message, type = 'error') { document.querySelector('.ump-toast')?.remove(); const n = document.createElement('div'); n.className = 'ump-toast ' + type; n.setAttribute('role', 'status'); n.innerHTML = (type === 'error' ? '⚠️' : '✓') + ' <span></span>'; n.querySelector('span').textContent = message; document.body.appendChild(n); setTimeout(() => { n.classList.add('removing'); setTimeout(() => n.remove(), 240) }, 3000) }
+    function selectRole(r) { role.value = r; document.querySelectorAll('.v17-role-cards button').forEach(x => x.classList.toggle('active', x.classList.contains(r))); if (r === 'admin') { u.placeholder = 'admin'; hint.innerHTML = 'Demo Admin: <b>admin</b> / <b>admin123</b>'; btn.textContent = 'Masuk sebagai Admin →' } else if (r === 'owner') { u.placeholder = 'owner'; hint.innerHTML = 'Demo Owner: <b>owner</b> / <b>owner123</b>'; btn.textContent = 'Masuk sebagai Owner →' } else { u.placeholder = 'customer'; hint.innerHTML = 'Demo Customer: <b>customer</b> / <b>customer123</b>'; btn.textContent = 'Masuk sebagai Customer →' } document.querySelector('.v17-login-form').scrollIntoView({ behavior: 'smooth', block: 'center' }) }
+    loginForm.onsubmit = e => { e.preventDefault(); const customers = JSON.parse(localStorage.getItem('ump_customers') || '[]'), customer = customers.find(x => x.username === u.value.trim() && x.password === p.value); if (role.value === 'admin' && u.value.trim() === 'admin' && p.value === 'admin123') { localStorage.setItem('ump_login', 'admin'); location = 'dashboard.html' } else if (role.value === 'owner' && u.value.trim() === 'owner' && p.value === 'owner123') { localStorage.setItem('ump_login', 'owner'); location = 'owner.html' } else if (role.value === 'customer' && customer) { localStorage.setItem('ump_login', 'customer'); localStorage.setItem('ump_customer_session', JSON.stringify(customer)); location = 'customer.html' } else { loginForm.classList.remove('ump-shake'); void loginForm.offsetWidth; loginForm.classList.add('ump-shake'); p.value = ''; p.focus(); umpNotice('Login gagal. Periksa jenis akun, username, dan password.', 'error'); setTimeout(() => loginForm.classList.remove('ump-shake'), 500) } };
+    let si = 0; function v17Move(n) { let s = [...document.querySelectorAll('.v17-show-slide')], d = [...document.querySelectorAll('.v17-slide-dots i')]; si = (si + n + s.length) % s.length; s.forEach((x, i) => x.classList.toggle('active', i === si)); d.forEach((x, i) => x.classList.toggle('active', i === si)) } setInterval(() => v17Move(1), 6500);
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>UMP Shop • Daftar Customer</title>
+  <link rel="stylesheet" href="style.css">
+<script src="realtime.js"></script></head>
+<body class="register-pro-body">
+<main class="register-pro">
+  <section class="register-showcase">
+    <div class="register-overlay"></div>
+    <div class="register-brand">
+      <img src="assets/logo-ump.jpg" alt="UMP Shop">
+      <div><strong>UMP SHOP</strong><small>Universal Mega Parts</small></div>
+    </div>
+    <div class="register-copy">
+      <span class="register-kicker">MEMBER UMP SHOP</span>
+      <h1>Belanja sparepart<br>lebih mudah dan aman.</h1>
+      <p>Buat akun customer untuk menyimpan alamat, wishlist, keranjang, serta memantau pesananmu dalam satu tempat.</p>
+      <div class="register-benefits">
+        <div><b>✓</b><span><strong>Belanja Lebih Cepat</strong><small>Profil dan alamat tersimpan</small></span></div>
+        <div><b>✓</b><span><strong>Pantau Pesanan</strong><small>Status order langsung dari akun</small></span></div>
+        <div><b>✓</b><span><strong>Promo Member</strong><small>Voucher dan penawaran customer</small></span></div>
+      </div>
+    </div>
+    <div class="register-trust"><span>🛡 Produk Terpercaya</span><span>🚚 Pengiriman Mudah</span><span>🧾 Invoice Tersedia</span></div>
+  </section>
+
+  <section class="register-panel">
+    <div class="register-card-pro">
+      <div class="register-mobile-logo"><img src="assets/logo-ump.jpg" alt="UMP"></div>
+      <div class="register-heading">
+        <span>Buat akun baru</span>
+        <h2>Daftar Customer</h2>
+        <p>Lengkapi informasi berikut untuk mulai berbelanja di UMP Shop.</p>
+      </div>
+      <form id="registerForm" class="register-form-pro">
+        <div class="register-grid">
+          <label class="reg-field reg-full"><span>Nama Lengkap</span><div class="reg-input"><i>👤</i><input name="name" autocomplete="name" placeholder="Masukkan nama lengkap" required></div></label>
+          <label class="reg-field"><span>Username</span><div class="reg-input"><i>@</i><input name="username" autocomplete="username" placeholder="Buat username" minlength="4" required></div></label>
+          <label class="reg-field"><span>No. HP</span><div class="reg-input"><i>☎</i><input name="phone" inputmode="tel" autocomplete="tel" placeholder="08xxxxxxxxxx" required></div></label>
+          <label class="reg-field reg-full"><span>Email</span><div class="reg-input"><i>✉</i><input name="email" type="email" autocomplete="email" placeholder="nama@email.com" required></div></label>
+          <label class="reg-field reg-full"><span>Alamat Utama</span><div class="reg-input reg-textarea"><i>⌖</i><textarea name="address" rows="2" autocomplete="street-address" placeholder="Alamat lengkap untuk pengiriman" required></textarea></div></label>
+          <label class="reg-field"><span>Password</span><div class="reg-input"><i>🔒</i><input id="regPassword" name="password" type="password" autocomplete="new-password" placeholder="Minimal 6 karakter" minlength="6" required><button type="button" class="reg-eye" onclick="toggleRegPass('regPassword',this)">◉</button></div><div class="password-meter"><span id="passwordMeter"></span></div><small id="passwordHint">Gunakan kombinasi huruf dan angka.</small></label>
+          <label class="reg-field"><span>Konfirmasi Password</span><div class="reg-input"><i>🔒</i><input id="regConfirm" name="confirm" type="password" autocomplete="new-password" placeholder="Ulangi password" minlength="6" required><button type="button" class="reg-eye" onclick="toggleRegPass('regConfirm',this)">◉</button></div><small id="matchHint"></small></label>
+        </div>
+        <label class="reg-agree"><input id="regAgree" type="checkbox" required><span>Saya menyetujui <b>Syarat & Ketentuan</b> serta <b>Kebijakan Privasi</b> UMP Shop.</span></label>
+        <button class="register-submit" type="submit">Buat Akun Customer <span>→</span></button>
+      </form>
+      <div class="register-login-link">Sudah punya akun? <a href="index.html">Masuk ke UMP Shop</a></div>
+      <div class="register-secure">🔐 Data akun digunakan untuk kebutuhan transaksi UMP Shop.</div>
+    </div>
+  </section>
+</main>
+<script>
+const pass=document.getElementById('regPassword'), confirmPass=document.getElementById('regConfirm');
+function toggleRegPass(id,btn){const el=document.getElementById(id);el.type=el.type==='password'?'text':'password';btn.textContent=el.type==='password'?'◉':'⊘'}
+function strength(v){let n=0;if(v.length>=6)n++;if(/[A-Z]/.test(v)&&/[a-z]/.test(v))n++;if(/\d/.test(v))n++;if(/[^A-Za-z0-9]/.test(v))n++;return n}
+pass.addEventListener('input',()=>{const n=strength(pass.value),meter=document.getElementById('passwordMeter'),hint=document.getElementById('passwordHint');meter.style.width=(n*25)+'%';meter.dataset.level=n;hint.textContent=n<=1?'Password masih lemah':n===2?'Password cukup':n===3?'Password kuat':'Password sangat kuat';checkMatch()});
+confirmPass.addEventListener('input',checkMatch);
+function checkMatch(){const h=document.getElementById('matchHint');if(!confirmPass.value){h.textContent='';return}const ok=pass.value===confirmPass.value;h.textContent=ok?'✓ Password cocok':'✕ Password tidak sama';h.className=ok?'match-ok':'match-bad'}
+registerForm.onsubmit=e=>{e.preventDefault();const f=new FormData(e.target);if(f.get('password')!==f.get('confirm'))return alert('Konfirmasi password tidak sama.');const a=JSON.parse(localStorage.getItem('ump_customers')||'[]'),username=f.get('username').trim(),email=f.get('email').trim().toLowerCase();if(a.some(x=>x.username.toLowerCase()===username.toLowerCase()))return alert('Username sudah digunakan.');if(a.some(x=>(x.email||'').toLowerCase()===email))return alert('Email sudah terdaftar.');a.push({id:Date.now(),name:f.get('name').trim(),username,email,phone:f.get('phone').trim(),address:f.get('address').trim(),password:f.get('password')});localStorage.setItem('ump_customers',JSON.stringify(a));alert('Pendaftaran berhasil. Silakan login sebagai Customer.');location='index.html'};
+</script>
+</body></html>

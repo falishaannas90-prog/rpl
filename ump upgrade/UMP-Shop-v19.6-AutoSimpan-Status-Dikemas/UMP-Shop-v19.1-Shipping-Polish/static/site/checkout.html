@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>UMP Shop • Checkout</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="realtime.js"></script>
+</head>
+
+<body class="market-body">
+    <header class="market-top">
+        <div class="market-nav" style="grid-template-columns:230px 1fr"><a class="market-logo" href="customer.html"><img
+                    src="assets/logo-ump.jpg">
+                <div><strong>UMP SHOP</strong><small>Checkout</small></div>
+            </a>
+            <div style="text-align:right"><a href="customer.html" style="color:#fff;text-decoration:none">← Kembali
+                    Belanja</a></div>
+        </div>
+    </header>
+    <main class="checkout-page">
+        <div id="successArea"></div>
+        <div class="checkout-grid" id="checkoutGrid">
+            <section class="checkout-card">
+                <h3>📍 Alamat Pengiriman</h3>
+                <div class="checkout-field"><label>Nama Penerima</label><input id="name" placeholder="Nama lengkap">
+                </div>
+                <div class="checkout-field"><label>No. HP</label><input id="phone" placeholder="08xxxxxxxxxx"></div>
+                <div class="checkout-field"><label>Alamat Lengkap</label><textarea id="address" rows="4"
+                        placeholder="Jalan, nomor rumah, kelurahan, kecamatan, kota..."></textarea></div>
+                <div class="checkout-field"><label>Pengiriman</label><select id="shipping">
+                        <option value="Reguler">Reguler • Rp 15.000</option>
+                        <option value="Express">Express • Rp 30.000</option>
+                        <option value="Ambil di Toko">Ambil di Toko • Gratis</option>
+                    </select></div>
+                <div class="checkout-field"><label>Voucher</label><input id="voucher" placeholder="Coba: UMP10"><small
+                        style="color:#7a8795">UMP10 = diskon 10% maksimal Rp 50.000</small></div>
+                <h3>💳 Metode Pembayaran</h3>
+                <div class="payment-methods-v12">
+                    <label class="pay-choice active"><input type="radio" name="paymethod" value="QRIS" checked
+                            onchange="selectPayment(this.value)"><span class="pay-logo">QR</span>
+                        <div><b>QRIS</b><small>Scan QR untuk pembayaran</small></div>
+                    </label>
+                    <label class="pay-choice"><input type="radio" name="paymethod" value="Transfer Bank"
+                            onchange="selectPayment(this.value)"><span class="pay-logo bank">BANK</span>
+                        <div><b>Transfer Bank</b><small>Transfer ke rekening UMP Shop</small></div>
+                    </label>
+                    <label class="pay-choice"><input type="radio" name="paymethod" value="DANA"
+                            onchange="selectPayment(this.value)"><span class="pay-logo dana">DANA</span>
+                        <div><b>DANA</b><small>Kirim ke nomor DANA admin</small></div>
+                    </label>
+                    <label class="pay-choice"><input type="radio" name="paymethod" value="Bayar di Toko / Tunai"
+                            onchange="selectPayment(this.value)"><span class="pay-logo cash">Rp</span>
+                        <div><b>Bayar di Toko</b><small>Tunai saat mengambil barang</small></div>
+                    </label>
+                </div>
+                <div id="paymentDetail" class="payment-detail-v12"></div>
+                <div class="checkout-field"><label>Catatan Pesanan (opsional)</label><input id="note"
+                        placeholder="Contoh: packing aman ya"></div>
+            </section>
+            <aside class="checkout-card">
+                <h3>Ringkasan Pesanan</h3>
+                <div id="orderItems"></div>
+                <div class="order-row"><span>Subtotal</span><b id="subtotal"></b></div>
+                <div class="order-row"><span>Ongkir</span><b id="shippingCost">Rp 15.000</b></div>
+                <div class="order-row"><span>Diskon</span><b id="discount">- Rp 0</b></div>
+                <div class="drawer-total" style="margin-top:16px"><span>Total</span><span id="grandTotal"></span></div>
+                <button class="full-btn" onclick="placeOrder()">Buat Pesanan</button><small
+                    style="display:block;color:#7a8795;margin-top:10px;text-align:center">Dengan membuat pesanan, stok
+                    akan otomatis diperbarui.</small>
+            </aside>
+        </div>
+    </main>
+    <script>
+        if (localStorage.getItem('ump_login') !== 'customer') location = 'index.html';
+        const $ = s => document.querySelector(s), rp = n => 'Rp ' + Number(n || 0).toLocaleString('id-ID');
+        const get = k => JSON.parse(localStorage.getItem('ump_' + k) || '[]'), set = (k, v) => localStorage.setItem('ump_' + k, JSON.stringify(v));
+        const el = { name: $('#name'), phone: $('#phone'), address: $('#address'), shipping: $('#shipping'), voucher: $('#voucher'), note: $('#note'), orderItems: $('#orderItems'), subtotal: $('#subtotal'), shippingCost: $('#shippingCost'), discount: $('#discount'), grandTotal: $('#grandTotal'), grid: $('#checkoutGrid'), success: $('#successArea') };
+        let session = JSON.parse(localStorage.getItem('ump_customer_session') || 'null');
+        let cart = JSON.parse(localStorage.getItem('ump_customer_cart') || '[]');
+        if (!session) { localStorage.removeItem('ump_login'); location = 'index.html'; }
+        if (!cart.length) location = 'customer.html';
+        if (session) { el.name.value = session.name || ''; el.phone.value = session.phone || ''; el.address.value = session.address || ''; }
+        let selectedPayment = 'QRIS';
+        function adminPay() { return JSON.parse(localStorage.getItem('ump_payment_settings') || 'null') || { bank: 'BCA', account: '1234567890', holder: 'Universal Mega Parts', dana: '081234567890' } }
+        function selectPayment(v) { selectedPayment = v; document.querySelectorAll('.pay-choice').forEach(x => x.classList.toggle('active', x.querySelector('input').value === v)); renderPaymentDetail() }
+        function renderPaymentDetail() { const a = adminPay(), box = $('#paymentDetail'); if (!box) return; if (selectedPayment === 'QRIS') box.innerHTML = `<div class="qris-box-v12"><img src="assets/qris-ump-demo.png"><div><b>Scan QRIS UMP Shop</b><p>Scan menggunakan aplikasi bank/e-wallet. QR pada prototype ini adalah <strong>QR demo</strong>, bukan QRIS produksi.</p><small>Setelah pembayaran, admin dapat mengonfirmasi dana masuk.</small></div></div>`; else if (selectedPayment === 'Transfer Bank') box.innerHTML = `<div class="bank-detail-v12"><span>BANK</span><div><small>Transfer ke</small><b>${a.bank} • ${a.account}</b><p>a.n. ${a.holder}</p></div></div>`; else if (selectedPayment === 'DANA') box.innerHTML = `<div class="bank-detail-v12"><span class="dana-pill">DANA</span><div><small>Kirim saldo DANA ke</small><b>${a.dana}</b><p>a.n. ${a.holder}</p></div></div>`; else box.innerHTML = '<div class="cash-info-v12">💵 Pembayaran dilakukan di toko saat pesanan diambil.</div>' }
+        function calc() { const sub = cart.reduce((s, x) => s + Number(x.price) * Number(x.qty), 0), ship = el.shipping.value === 'Reguler' ? 15000 : el.shipping.value === 'Express' ? 30000 : 0, disc = el.voucher.value.trim().toUpperCase() === 'UMP10' ? Math.min(50000, Math.round(sub * .1)) : 0; return { sub, ship, disc, total: sub + ship - disc } }
+        function render() { el.orderItems.innerHTML = cart.map(x => `<div class="order-row"><span>${x.name} × ${x.qty}</span><b>${rp(x.price * x.qty)}</b></div>`).join(''); const c = calc(); el.subtotal.textContent = rp(c.sub); el.shippingCost.textContent = rp(c.ship); el.discount.textContent = '- ' + rp(c.disc); el.grandTotal.textContent = rp(c.total) }
+        el.shipping.addEventListener('change', render); el.voucher.addEventListener('input', render);
+        function placeOrder() {
+            const n = el.name.value.trim(), ph = el.phone.value.trim(), ad = el.address.value.trim(), pay = selectedPayment;
+            if (!n || !ph || !ad) return alert('Lengkapi nama, nomor HP, dan alamat pengiriman.');
+            let products = get('products');
+            for (const x of cart) { const p = products.find(y => String(y.id) === String(x.id)); if (!p) return alert('Produk ' + x.name + ' tidak ditemukan.'); if (Number(p.stock) < Number(x.qty)) return alert('Stok ' + x.name + ' tidak mencukupi. Stok tersedia: ' + p.stock); }
+            const c = calc(), now = new Date().toISOString(), id = 'UMP-' + Date.now().toString().slice(-9), tx = get('transactions');
+            const orderItems = cart.map(x => ({ ...x }));
+            for (const x of orderItems) { const p = products.find(y => String(y.id) === String(x.id)); p.stock = Number(p.stock) - Number(x.qty); tx.unshift({ id: Date.now() + Number(x.id || 0), type: 'Penjualan', product: x.name, qty: Number(x.qty), total: Number(x.price) * Number(x.qty), date: now, customer: n, phone: ph, payment: pay, orderId: id }); }
+            const order = { orderId: id, customerId: session.id, username: session.username || '', name: n, phone: ph, address: ad, payment: pay, shipping: el.shipping.value, shippingCost: c.ship, subtotal: c.sub, discount: c.disc, voucher: el.voucher.value.trim().toUpperCase(), note: el.note.value.trim(), total: c.total, items: orderItems, date: now, status: 'Pesanan Dibuat', paymentStatus: pay === 'Bayar di Toko / Tunai' ? 'Bayar di Toko' : 'Menunggu Verifikasi' };
+            let orders = JSON.parse(localStorage.getItem('ump_customer_orders') || '[]'); orders.unshift(order);
+            set('products', products); set('transactions', tx); localStorage.setItem('ump_customer_orders', JSON.stringify(orders)); localStorage.setItem('ump_customer_cart', '[]');
+            // Keep profile contact info current so order history can also match older records.
+            session = { ...session, name: n, phone: ph, address: ad }; localStorage.setItem('ump_customer_session', JSON.stringify(session));
+            let customers = JSON.parse(localStorage.getItem('ump_customers') || '[]'), ci = customers.findIndex(x => String(x.id) === String(session.id)); if (ci >= 0) { customers[ci] = { ...customers[ci], name: n, phone: ph, address: ad }; localStorage.setItem('ump_customers', JSON.stringify(customers)); }
+            el.grid.style.display = 'none'; el.success.innerHTML = `<div class="order-success"><div style="font-size:48px">✓</div><h2>Pesanan Berhasil Dibuat</h2><p>Nomor pesanan: <b>${id}</b></p><p>Total pembayaran: <b>${rp(c.total)}</b> • ${pay}</p><p>Status: <b>Pesanan Dibuat</b></p><a href="customer.html?view=orders"><button class="full-btn" style="width:auto">Lihat Pesanan & Riwayat</button></a></div>`;
+        }
+        Object.assign(window, { placeOrder, selectPayment }); render(); renderPaymentDetail();
+    </script>
+</body>
+
+</html>

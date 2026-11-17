@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>UMP Shop • Marketplace</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="realtime.js"></script>
+</head>
+
+<body class="market-body">
+  <header class="market-top market-top-v9">
+    <div class="market-nav">
+      <a class="market-logo market-logo-v9" href="customer.html"><img src="assets/logo-ump.jpg">
+        <div><strong>UMP SHOP</strong><small>Sparepart & Aksesoris Motor</small></div>
+      </a>
+      <div class="market-search market-search-v9"><input id="customerSearch"
+          placeholder="Cari produk, kategori, atau merek..." oninput="renderMarketplace()"><button
+          onclick="renderMarketplace()">⌕</button></div>
+
+      <div class="customer-nav-actions v11-actions">
+        <div class="v11-account-wrap">
+          <button class="v11-nav-btn account-trigger top-dest" data-dest="profile" type="button"
+            onclick="toggleAccountMenu(event)">
+            <span class="v11-icon user-icon">👤</span><span class="v11-label">Akun</span><span
+              class="v11-chevron">⌄</span>
+          </button>
+          <div class="v11-account-menu" id="accountMenu">
+            <div class="v11-account-head">
+              <div class="v11-avatar">👤</div>
+              <div><strong id="accountMenuName">Customer UMP</strong><small>Member UMP Shop</small></div>
+            </div>
+            <button onclick="showView('profile');closeAccountMenu()">👤 <span>Profil Saya</span></button>
+            <button onclick="showView('orders');closeAccountMenu()">📦 <span>Pesanan Saya</span></button>
+            <button onclick="showView('wishlist');closeAccountMenu()">♡ <span>Favorit Saya</span></button>
+            <div class="v11-menu-line"></div>
+            <button class="v11-logout-menu" onclick="customerLogoutNow()">↪ <span>Keluar / Logout</span></button>
+          </div>
+        </div>
+        <button class="v11-nav-btn top-dest" data-dest="wishlist" type="button" onclick="showView('wishlist')"><span
+            class="v11-icon">♡</span><span class="v11-label">Favorit</span><b class="v11-badge wishlist-badge"
+            id="wishlistCount">0</b></button>
+        <button class="v11-nav-btn v11-cart top-dest" data-dest="cart" type="button" onclick="showView('cart')"><span
+            class="v11-icon">🛒</span><span class="v11-label">Keranjang</span><b class="v11-badge"
+            id="cartCount">0</b></button>
+      </div>
+    </div>
+  </header>
+  <nav class="market-menu-v9">
+    <div class="market-menu-inner">
+      <button class="all-cat-btn"
+        onclick="document.getElementById('categorySection').scrollIntoView({behavior:'smooth'})">☰ &nbsp; Semua
+        Kategori</button>
+      <a class="menu-link" href="wholesale.html" style="text-decoration:none;display:inline-flex;align-items:center">📦
+        Belanja Grosir</a>
+      <button class="menu-link"
+        onclick="document.getElementById('productsSection').scrollIntoView({behavior:'smooth'})">▣ Produk</button>
+      <button class="menu-link" data-view="promo" onclick="showPromoSection()">🏷 Promo</button>
+      <button class="menu-link" data-view="orders" onclick="showView('orders')">🛒 Pesanan Saya</button>
+      <span class="market-tagline">Sparepart Motor Berkualitas untuk Performa Terbaik</span>
+    </div>
+  </nav>
+  <main class="market-main market-main-v9">
+    <section id="shopView" class="customer-view active">
+      <section class="hero-ad-slider hero-v9" aria-label="Promo UMP Shop">
+        <div class="hero-ad-track" id="heroAdTrack">
+          <article class="hero-ad-slide active"
+            style="background-image:linear-gradient(90deg,rgba(2,12,28,.94) 0%,rgba(2,12,28,.52) 48%,rgba(2,12,28,.06) 100%),url('assets/promo-sparepart.jpg')">
+            <div class="hero-ad-content"><span class="promo-badge">SPAREPART & AKSESORIS MOTOR</span>
+              <h1>JAGA PERFORMA<br><em>MOTOR ANDA</em></h1>
+              <p>Suku cadang pilihan, harga terbaik, dan kualitas terjamin.</p><button class="hero-shop-btn"
+                onclick="document.getElementById('productsSection').scrollIntoView({behavior:'smooth'})">Belanja
+                Sekarang　›</button>
+            </div>
+          </article>
+          <article class="hero-ad-slide"
+            style="background-image:linear-gradient(90deg,rgba(2,12,28,.94) 0%,rgba(2,12,28,.50) 48%,rgba(2,12,28,.06) 100%),url('assets/promo-service.jpg')">
+            <div class="hero-ad-content"><span class="promo-badge">UMP OFFICIAL STORE</span>
+              <h1>ORIGINAL PARTS<br><em>FULL POWER</em></h1>
+              <p>Temukan kebutuhan servis dan sparepart motor dalam satu toko.</p>
+            </div>
+          </article>
+          <article class="hero-ad-slide hero-ad-gradient">
+            <div class="hero-ad-content"><span class="promo-badge">PROMO CUSTOMER</span>
+              <h1>HEMAT 10%<br><em>PAKAI UMP10</em></h1>
+              <p>Gunakan voucher UMP10 saat checkout untuk mendapatkan potongan belanja.</p><button
+                class="hero-shop-btn"
+                onclick="document.getElementById('productsSection').scrollIntoView({behavior:'smooth'})">Belanja
+                Promo　›</button>
+            </div>
+          </article>
+        </div>
+        <button class="hero-arrow hero-prev" type="button" onclick="moveHero(-1)">‹</button><button
+          class="hero-arrow hero-next" type="button" onclick="moveHero(1)">›</button>
+        <div class="hero-dots"><button class="active" onclick="goHero(0)"></button><button
+            onclick="goHero(1)"></button><button onclick="goHero(2)"></button></div>
+      </section>
+
+      <section id="categorySection" class="category-market-v9">
+        <div class="category-title-v9">
+          <h2>Kategori Pilihan</h2><span>Pilih kebutuhan motormu</span>
+        </div>
+        <div class="category-grid-v9" id="categoryChips"></div>
+      </section>
+
+      <section class="market-benefits benefits-v9">
+        <div class="benefit"><span>🛡️</span>
+          <div><b>Produk Terpercaya</b><small>Katalog pilihan UMP</small></div>
+        </div>
+        <div class="benefit"><span>🚚</span>
+          <div><b>Pengiriman Mudah</b><small>Reguler / Express</small></div>
+        </div>
+        <div class="benefit"><span>🏷️</span>
+          <div><b>Promo Customer</b><small>Voucher UMP10</small></div>
+        </div>
+        <div class="benefit"><span>🧾</span>
+          <div><b>Invoice Pesanan</b><small>Bukti belanja tersedia</small></div>
+        </div>
+      </section>
+
+      <section id="promoSection" class="v181-promo-section">
+        <div class="v181-promo-head">
+          <div><span>PROMO UMP SHOP</span>
+            <h2>Promo Spesial Customer</h2>
+            <p>Nikmati penawaran belanja sparepart pilihan.</p>
+          </div><button onclick="applyPromoSearch()">Lihat Produk Promo</button>
+        </div>
+        <div class="v181-promo-grid">
+          <div><b>HEMAT 10%</b><strong>Voucher UMP10</strong><small>Gunakan kode <b>UMP10</b> saat checkout.</small>
+          </div>
+          <div><b>STOK PILIHAN</b><strong>Sparepart Terlaris</strong><small>Belanja produk favorit customer UMP
+              Shop.</small></div>
+          <div><b>BELANJA MUDAH</b><strong>Checkout Cepat</strong><small>Pilih barang, masukkan keranjang, lalu
+              checkout.</small></div>
+        </div>
+      </section>
+      <section id="productsSection" class="products-v9">
+        <div class="market-section-head v9-product-head">
+          <div>
+            <h2>Produk Pilihan</h2><small>Rekomendasi sparepart untuk motormu</small>
+          </div>
+          <div><small id="productCount"></small></div>
+        </div>
+        <div id="customerProducts" class="market-products"></div>
+      </section>
+    </section>
+
+    <section id="ordersView" class="customer-view">
+      <div class="account-page">
+        <div class="account-head">
+          <div>
+            <h2>📦 Pesanan & Riwayat</h2>
+            <p>Cek pesanan aktif, pembayaran, pengiriman, dan transaksi yang sudah selesai.</p>
+          </div><button class="back-shop" onclick="showView('shop')">← Kembali Belanja</button>
+        </div>
+        <div class="order-history-tabs"><button class="active" data-order-filter="Semua"
+            onclick="setOrderFilter('Semua',this)">Semua</button><button data-order-filter="Aktif"
+            onclick="setOrderFilter('Aktif',this)">Sedang Diproses</button><button data-order-filter="Dikirim"
+            onclick="setOrderFilter('Dikirim',this)">Dikirim</button><button data-order-filter="Selesai"
+            onclick="setOrderFilter('Selesai',this)">Riwayat Selesai</button><button data-order-filter="Dibatalkan"
+            onclick="setOrderFilter('Dibatalkan',this)">Dibatalkan</button></div>
+        <div class="order-history-summary">
+          <div><span>Total Pesanan</span><b id="historyTotal">0</b></div>
+          <div><span>Sedang Berjalan</span><b id="historyActive">0</b></div>
+          <div><span>Selesai</span><b id="historyDone">0</b></div>
+        </div>
+        <div id="ordersList"></div>
+      </div>
+    </section>
+    <div class="order-detail-modal" id="orderDetailModal">
+      <div class="order-detail-box"><button class="order-detail-close" onclick="closeOrderDetail()">×</button>
+        <div id="orderDetailContent"></div>
+      </div>
+    </div>
+    <section id="wishlistView" class="customer-view">
+      <div class="account-page">
+        <div class="account-head">
+          <div>
+            <h2>❤️ Produk Favorit</h2>
+            <p>Produk yang kamu simpan untuk dibeli nanti.</p>
+          </div><button class="back-shop" onclick="showView('shop')">← Kembali Belanja</button>
+        </div>
+        <div id="wishlistProducts" class="market-products"></div>
+      </div>
+    </section>
+    <section id="cartView" class="customer-view">
+      <div class="account-page">
+        <div class="account-head">
+          <div>
+            <h2>🛒 Keranjang Saya</h2>
+            <p>Atur jumlah barang sebelum melanjutkan ke checkout.</p>
+          </div><button class="back-shop" onclick="showView('shop')">← Kembali Belanja</button>
+        </div>
+        <div class="v18-cart-page">
+          <div id="cartPageItems" class="v18-cart-items"></div>
+          <aside class="v18-cart-summary">
+            <h3>Ringkasan Belanja</h3>
+            <div><span>Total Barang</span><b id="cartPageCount">0</b></div>
+            <div class="v18-cart-total"><span>Total</span><b id="cartPageTotal">Rp 0</b></div><button
+              class="v18-checkout-red" onclick="goCheckout()">Checkout Sekarang</button>
+          </aside>
+        </div>
+      </div>
+    </section>
+    <section id="profileView" class="customer-view">
+      <div class="account-page narrow">
+        <div class="account-head">
+          <div>
+            <h2>👤 Profil Saya</h2>
+            <p>Data ini digunakan untuk mempercepat checkout.</p>
+          </div><button class="back-shop" onclick="showView('shop')">← Kembali</button>
+        </div>
+        <div class="checkout-card">
+          <div class="checkout-field"><label>Nama Lengkap</label><input id="profileName"></div>
+          <div class="checkout-field"><label>Username</label><input id="profileUsername" disabled></div>
+          <div class="checkout-field"><label>No. HP</label><input id="profilePhone"></div>
+          <div class="checkout-field"><label>Alamat Utama</label><textarea id="profileAddress" rows="4"></textarea>
+          </div><button class="full-btn" onclick="saveProfile()">Simpan Profil</button>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="marketOverlay" class="market-overlay" onclick="closeCart()"></div>
+  <aside id="cartDrawer" class="cart-drawer">
+    <div class="drawer-head">
+      <div><b>Keranjang Saya</b><small style="display:block;color:#7a8795" id="drawerCount"></small></div><button
+        onclick="closeCart()">✕</button>
+    </div>
+    <div class="drawer-items" id="customerCart"></div>
+    <div class="drawer-bottom">
+      <div class="drawer-total"><span>Total</span><span id="cartTotal">Rp 0</span></div><button class="full-btn"
+        onclick="goCheckout()">Checkout Sekarang</button>
+    </div>
+  </aside>
+  <div class="chat-fab-wrap"><button class="chat-fab" onclick="toggleChat()">💬<b id="chatBadge"
+        style="display:none">0</b></button><span>Chat Admin</span></div>
+  <section id="chatPanel" class="chat-panel">
+    <header>
+      <div class="chat-av">U</div>
+      <div><b>Admin UMP Shop</b><small>● Customer Service</small></div><button onclick="toggleChat()">×</button>
+    </header>
+    <div id="chatMessages" class="chat-messages"></div>
+    <div class="chat-quick"><button
+        onclick="sendQuick('Halo Admin, saya ingin bertanya tentang stok produk.')">Stok</button><button
+        onclick="sendQuick('Halo Admin, saya ingin bertanya tentang pembayaran.')">Pembayaran</button><button
+        onclick="sendQuick('Halo Admin, saya ingin bertanya tentang pesanan saya.')">Pesanan</button></div>
+    <form id="chatForm" class="chat-send"><input id="chatText" maxlength="500" placeholder="Tulis pesan untuk Admin..."
+        autocomplete="off"><button>➤</button></form>
+  </section>
+  <script src="customer.js"></script>
+</body>
+
+</html>
